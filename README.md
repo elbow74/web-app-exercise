@@ -6,6 +6,10 @@ A little exercise to build a web application following an agile development proc
 
 See instructions. Delete this line and place the Product Vision Statement here.
 
+In addition to the product vision statement, here is our UXUI reference for this project.  
+[Wireframe](https://www.figma.com/design/jC1TPpkBrygT6ArfWTVpap/Project-2---Web-App?node-id=0-1&t=OVJtM033yJkgKo67-1)
+[Prototype](https://www.figma.com/proto/jC1TPpkBrygT6ArfWTVpap/Project-2---Web-App?node-id=12-14&t=oxoGThtGmibutCFw-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=12%3A117)
+
 ## User stories
 
 See instructions. Delete this line and place a link to the user stories here.

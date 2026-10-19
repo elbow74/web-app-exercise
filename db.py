@@ -1,3 +1,5 @@
+"""MongoDB connection setup: loads config from .env and exposes client and db."""
+
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient

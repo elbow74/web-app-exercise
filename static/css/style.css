@@ -1,8 +1,17 @@
-.container {
-  border: 5px solid;
-  max-width: 393px;
-  max-height: 852px;
-  margin: auto;
-  padding: 20px;
-  box-sizing: border-box;
+/* iphone sized screen container */
+#page-wrap {
+    width: 393px;
+    height: 852px;
+    margin: 20px auto;
+    border: 2px solid #100;
+    overflow: scroll;
+}
+
+/* centers iphone (#page-wrap) screen vertically & horizontally */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
 }

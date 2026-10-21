@@ -4,7 +4,8 @@ A little exercise to build a web application following an agile development proc
 
 ## Product vision statement
 
-See instructions. Delete this line and place the Product Vision Statement here.
+Virtual Closet is a social web app focused on photos of users’ outfits using a certain clothing piece and links for where to buy it, with these posts being organized into threads of different clothing pieces, and users can interact with each other through liking and commenting.
+
 
 In addition to the product vision statement, here is our UXUI reference for this project.  
 [Wireframe](https://www.figma.com/design/jC1TPpkBrygT6ArfWTVpap/Project-2---Web-App?node-id=0-1&t=OVJtM033yJkgKo67-1)

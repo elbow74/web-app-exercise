@@ -5,6 +5,10 @@
     margin: 20px auto;
     border: 2px solid #100;
     overflow: scroll;
+    background: #fafafa;
+    box-sizing: border-box;
+    border-radius: 24px;
+    overflow-y: auto;
 }
 
 /* centers iphone (#page-wrap) screen vertically & horizontally */
@@ -20,4 +24,73 @@ body {
 .continue-button {
     display: block;
     margin: 0 auto;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: #f2f2f2;
+}
+
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    padding: 14px 0;
+}
+
+.top-bar h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.post {
+    background: #fff;
+    margin: 12px;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 420px;
+}
+
+.post img {
+    display: block;
+    width: 100%;
+    object-fit: cover;
+    background: #e5e5e5;
+    flex: 0 0 280px;
+}
+
+.post-info {
+    padding: 10px 14px;
+    overflow: hidden;
+}
+
+.post-info p {
+    margin: 4px 0;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.username {
+    font-weight: bold;
+}
+
+.tags {
+    color: #2a6fdb;
+}
+
+.likes {
+    color: #555;
+}
+
+.date {
+    color: #888;
+    font-size: 12px;
+}
+
+.empty {
+    text-align: center;
+    color: #777;
 }

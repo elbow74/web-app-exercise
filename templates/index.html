@@ -3,14 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}"/>
     <title>Home Page</title>
 </head>
 
 <body>
     <div id="page-wrap">
-    <h1>Virtual Closet</h1>
-    <p>It works!</p>
+    <header class="top-bar">
+        <h1>Virtual Closet</h1>
+        <p>Logged in as {{ current_user.username }}.</p>
+        <p><a href="{{url_for("logout")}}">Log out</a></p>
+    </header>
+    {% for post in posts %}
+        <div class="post">
+            <img src="{{ url_for('static', filename=post.image_path) }}" alt="Outfit by {{ post.username }}">
+            <div class="post-info">
+                <p class="username">@{{ post.username }}</p>
+                <p>{{ post.caption }}</p>
+                <p class="tags">{% for tag in post.hashtags %}#{{ tag }} {% endfor %}</p>
+                <p class="likes">♡ {{ post.liked_by | length }}</p>
+                <p class="date">{{ post.created_at.strftime('%b %d, %Y · %I:%M %p') }}</p>
+            </div>
+        </div>
+    {% endfor %}
+    {% if not posts %}
+        <p class="empty">No posts available.</p>
+    {% endif %}
     </div>
 </body>
 

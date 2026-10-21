@@ -1,4 +1,5 @@
 """Virtual Closet web app."""
+
 import os
 
 from bson.errors import InvalidId
@@ -41,6 +42,7 @@ def load_user(user_id):
         return None
     return User(doc) if doc else None
 
+
 @app.route("/authentication", methods=["GET", "POST"])
 def authenticate():
     """Log in, or create an account if the username is new."""
@@ -56,7 +58,10 @@ def authenticate():
             flash("Username and password are required.")
         elif doc is None:
             result = db.users.insert_one(
-                {"username": username, "password_hash": generate_password_hash(password)}
+                {
+                    "username": username,
+                    "password_hash": generate_password_hash(password),
+                }
             )
             login_user(User({"_id": result.inserted_id, "username": username}))
             return redirect(url_for("home"))
@@ -69,16 +74,13 @@ def authenticate():
     return render_template("authentication.html")
 
 
-
 @app.route("/")
 @login_required
 def home():
     """Render the home page."""
-    return (
-        f"<h1>Virtual Closet</h1>"
-        f"<p>Logged in as {escape(current_user.username)}.</p>"
-        f'<p><a href="{url_for("logout")}">Log out</a></p>'
-    )
+    posts = list(db.posts.find().sort("created_at", -1))
+    return render_template("index.html", posts=posts)
+
 
 @app.route("/logout")
 @login_required
@@ -86,6 +88,7 @@ def logout():
     """Log out and return to the login page."""
     logout_user()
     return redirect(url_for("authenticate"))
+
 
 @app.route("/account")
 def account():

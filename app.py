@@ -78,7 +78,8 @@ def authenticate():
 @login_required
 def home():
     """Render the home page."""
-    return render_template(("index.html"))
+    posts = list(db.posts.find().sort("created_at", -1))
+    return render_template("index.html", posts=posts)
 
 
 @app.route("/logout")

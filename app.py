@@ -1,14 +1,17 @@
 """Virtual Closet web app."""
 
 from flask import Flask, render_template
+from db import db
 
 app = Flask(__name__)
 
 
 @app.route("/")
+@app.route("/")
 def home():
-    # """Render the home page."""
-    return render_template("index.html")
+    # """Render the home page with the newest posts first."""
+    posts = list(db.posts.find().sort("created_at", -1))
+    return render_template("index.html", posts=posts)
 
 
 @app.route("/authentication")

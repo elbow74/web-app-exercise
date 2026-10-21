@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css')}}"
+    />
+    <title>Authentication Page</title>
+  </head>
+
+  <body>
+    <div id="page-wrap">
+      <h1>Login/Sign Up</h1>
+      <p>Enter information to log in or automatically create an account</p>
+
+      {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+          <p class="flash">{{ message }}</p>
+        {% endfor %}
+      {% endwith %}
+
+      <form method="post" action="{{ url_for('authenticate') }}">
+        <label for="username">Username</label>
+        <input id="username" name="username" required />
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" required />
+
+        <button type="submit">Continue</button>
+      </form>
+    </div>
+  </body>
+</html>

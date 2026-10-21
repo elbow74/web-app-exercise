@@ -21,7 +21,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev")
 
 login_manager = LoginManager(app)
-login_manager.login_view = "login"
+login_manager.login_view = "authenticate"
 
 
 class User(UserMixin):
@@ -41,6 +41,34 @@ def load_user(user_id):
         return None
     return User(doc) if doc else None
 
+@app.route("/authentication", methods=["GET", "POST"])
+def authenticate():
+    """Log in, or create an account if the username is new."""
+    if current_user.is_authenticated:
+        return redirect(url_for("home"))
+
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+        doc = db.users.find_one({"username": username})
+
+        if not username or not password:
+            flash("Username and password are required.")
+        elif doc is None:
+            result = db.users.insert_one(
+                {"username": username, "password_hash": generate_password_hash(password)}
+            )
+            login_user(User({"_id": result.inserted_id, "username": username}))
+            return redirect(url_for("home"))
+        elif check_password_hash(doc["password_hash"], password):
+            login_user(User(doc))
+            return redirect(url_for("home"))
+        else:
+            flash("Incorrect password for that username.")
+
+    return render_template("authentication.html")
+
+
 
 @app.route("/")
 @login_required
@@ -52,46 +80,29 @@ def home():
         f'<p><a href="{url_for("logout")}">Log out</a></p>'
     )
 
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    """Create an account and log the new user in."""
-    if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
-        if not username or not password:
-            flash("Username and password are required.")
-        elif db.users.find_one({"username": username}):
-            flash("That username is taken.")
-        else:
-            result = db.users.insert_one(
-                {"username": username, "password_hash": generate_password_hash(password)}
-            )
-            login_user(User({"_id": result.inserted_id, "username": username}))
-            return redirect(url_for("home"))
-    return render_template("auth.html", title="Register", other="login")
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    """Log in with a username and password."""
-    if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
-        doc = db.users.find_one({"username": username})
-        if doc and check_password_hash(doc["password_hash"], password):
-            login_user(User(doc))
-            return redirect(url_for("home"))
-        flash("Invalid username or password.")
-    return render_template("auth.html", title="Log in", other="register")
-
-
 @app.route("/logout")
 @login_required
 def logout():
     """Log out and return to the login page."""
     logout_user()
-    return redirect(url_for("login"))
+    return redirect(url_for("authenticate"))
+
+@app.route("/account")
+def account():
+    # """Render the account page."""
+    return render_template("account.html")
+
+
+@app.route("/create")
+def create():
+    # """Render the create / new post page."""
+    return render_template("create.html")
+
+
+@app.route("/edit")
+def edit():
+    # """Render the edit post page."""
+    return render_template("edit.html")
 
 
 if __name__ == "__main__":

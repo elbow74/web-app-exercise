@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <title>Search Page</title>
+</head>
+
+<body>
+    <div id="page-wrap">
+        <h1>Search Clothing</h1>
+
+        <form>
+            <label for="search">Search:</label>
+            <input type="text" id="search" name="search">
+
+            <button type="submit">Search</button>
+        </form>
+
+        <h2>Results</h2>
+
+        <div class="search-result">
+            <h3>Example Item</h3>
+            <p>View outfits using this clothing item.</p>
+        </div>
+
+        <div class="search-result">
+            <h3>Example Item</h3>
+            <p>View outfits using this clothing item.</p>
+        </div>
+
+        <div class="search-result">
+            <h3>Example Item</h3>
+            <p>View outfits using this clothing item.</p>
+        </div>
+    </div>
+</body>

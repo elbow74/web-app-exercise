@@ -18,6 +18,12 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
+}
+
+/* centers the continue button horizontally */
+.continue-button {
+    display: block;
+    margin: 0 auto;
     font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
     background: #f2f2f2;
 }

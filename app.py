@@ -24,11 +24,6 @@ app.secret_key = os.getenv("SECRET_KEY", "dev")
 login_manager = LoginManager(app)
 login_manager.login_view = "authenticate"
 
-@app.route("/")
-def home():
-    # """Render the home page with the newest posts first."""
-    posts = list(db.posts.find().sort("created_at", -1))
-    return render_template("index.html", posts=posts)
 
 class User(UserMixin):
     """Logged-in user, built from a document in the users collection."""
@@ -83,7 +78,8 @@ def authenticate():
 @login_required
 def home():
     """Render the home page."""
-    return render_template(("index.html"))
+    posts = list(db.posts.find().sort("created_at", -1))
+    return render_template("index.html", posts=posts)
 
 
 @app.route("/logout")

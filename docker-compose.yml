@@ -3,7 +3,7 @@ services:
   flask-app:
     build: .
     ports:
-      - 5001:5000
+      - 5000:5000
     environment:
       - MONGO_DBNAME=virtual_closet
       - MONGO_URI=mongodb://admin:secret@mongodb:27017

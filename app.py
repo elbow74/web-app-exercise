@@ -1,7 +1,7 @@
 """Virtual Closet web app."""
 
 import os
-
+from datetime import datetime, timezone
 from bson.errors import InvalidId
 from bson.objectid import ObjectId
 from flask import Flask, flash, redirect, render_template, request, url_for
@@ -13,7 +13,6 @@ from flask_login import (
     login_user,
     logout_user,
 )
-from markupsafe import escape
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import db
@@ -41,6 +40,7 @@ def load_user(user_id):
     except InvalidId:
         return None
     return User(doc) if doc else None
+
 
 
 @app.route("/authentication", methods=["GET", "POST"])
@@ -96,11 +96,53 @@ def account():
     return render_template("account.html")
 
 
-@app.route("/create")
+@app.route("/create", methods=["GET", "POST"])
+@login_required
 def create():
-    # """Render the create / new post page."""
-    return render_template("create.html")
+    """Show the new post form, add or remove hashtags and links, and save the post."""
+    hashtags = []
+    buy_links = []
 
+    if request.method == "POST":
+        caption = request.form.get("caption", "").strip()
+        hashtags = request.form.getlist("hashtags")
+        buy_links = request.form.getlist("buy_links")
+        new_hashtag = request.form.get("new_hashtag", "").strip()
+        new_link = request.form.get("new_link", "").strip()
+        action = request.form.get("action", "post")
+
+        if action in ("add", "post"):
+            if new_hashtag:
+                hashtags.append(new_hashtag)
+            if new_link:
+                buy_links.append(new_link)
+
+        if action.startswith("remove_hashtag:"):
+            removed = action.removeprefix("remove_hashtag:")
+            hashtags = [tag for tag in hashtags if tag != removed]
+        elif action.startswith("remove_link:"):
+            removed = action.removeprefix("remove_link:")
+            buy_links = [link for link in buy_links if link != removed]
+        elif action == "post":
+            if not caption:
+                flash("Caption is required.")
+            else:
+                db.posts.insert_one(
+                    {
+                        "username": current_user.username,
+                        "image_path": None,  # set by the image upload feature
+                        "caption": caption,
+                        "hashtags": hashtags,
+                        "buy_links": buy_links,
+                        "liked_by": [],
+                        "created_at": datetime.now(timezone.utc),
+                    }
+                )
+                return redirect(url_for("home"))
+
+    return render_template(
+        "create.html", form=request.form, hashtags=hashtags, buy_links=buy_links
+    )
 
 @app.route("/edit")
 def edit():

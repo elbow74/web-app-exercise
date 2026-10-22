@@ -94,3 +94,90 @@ body {
     text-align: center;
     color: #777;
 }
+
+/* create post form, a card like .post */
+.create-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #fff;
+    margin: 12px;
+    padding: 14px;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+}
+
+.create-form label {
+    font-weight: bold;
+    margin-top: 6px;
+}
+
+.create-form input,
+.create-form textarea {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.create-form button {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f2f2f2;
+    font: inherit;
+    cursor: pointer;
+}
+
+/* text box and its Add button on one row */
+.add-row {
+    display: flex;
+    gap: 8px;
+}
+
+.add-row input {
+    flex: 1;
+}
+
+/* hashtags and links added so far */
+.chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    padding: 4px 4px 4px 10px;
+    background: #f2f2f2;
+    border-radius: 12px;
+    color: #2a6fdb;
+    word-break: break-all;
+}
+
+.create-form .chip button {
+    padding: 0 6px;
+    border: none;
+    background: none;
+    color: #888;
+}
+
+.create-form .post-button {
+    margin-top: 8px;
+    border: none;
+    background: #2a6fdb;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* error messages from flash() */
+.flash {
+    margin: 12px;
+    color: #b00020;
+    font-size: 14px;
+}

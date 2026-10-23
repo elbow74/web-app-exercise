@@ -12,7 +12,75 @@
 
   <body>
     <div id="page-wrap">
-      <h1>Create post</h1>
+      <header class="top-bar">
+        <h1>Create post</h1>
+        <p><a href="{{ url_for('home') }}">Back to feed</a></p>
+      </header>
+
+      {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+          <p class="flash">{{ message }}</p>
+        {% endfor %}
+      {% endwith %}
+
+      <form class="create-form" method="post" action="{{ url_for('create') }}">
+        <!-- image upload goes here -->
+
+        <label for="caption">Caption</label>
+        <textarea id="caption" name="caption" rows="3" required>{{ form.get('caption', '') }}</textarea>
+
+        <label for="new_hashtag">Hashtags</label>
+        <div class="add-row">
+          <input id="new_hashtag" name="new_hashtag" placeholder="vintage" />
+          <button type="submit" name="action" value="add" formnovalidate>
+            Add
+          </button>
+        </div>
+        <div class="chip-list">
+          {% for tag in hashtags %}
+            <span class="chip">
+              #{{ tag }}
+              <input type="hidden" name="hashtags" value="{{ tag }}" />
+              <button
+                type="submit"
+                name="action"
+                value="remove_hashtag:{{ tag }}"
+                formnovalidate
+              >
+                ×
+              </button>
+            </span>
+          {% endfor %}
+        </div>
+
+        <label for="new_link">Where to buy</label>
+        <div class="add-row">
+          <input id="new_link" name="new_link" placeholder="https://..." />
+          <button type="submit" name="action" value="add" formnovalidate>
+            Add
+          </button>
+        </div>
+        <div class="chip-list">
+          {% for link in buy_links %}
+            <span class="chip">
+              {{ link }}
+              <input type="hidden" name="buy_links" value="{{ link }}" />
+              <button
+                type="submit"
+                name="action"
+                value="remove_link:{{ link }}"
+                formnovalidate
+              >
+                ×
+              </button>
+            </span>
+          {% endfor %}
+        </div>
+
+        <button class="post-button" type="submit" name="action" value="post">
+          Post
+        </button>
+      </form>
     </div>
   </body>
 </html>

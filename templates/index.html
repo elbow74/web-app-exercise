@@ -15,6 +15,7 @@
         <p><a href="{{url_for("logout")}}">Log out</a></p>
     </header>
     {% for post in posts %}
+    <div id="post-{{ post._id }}">
         <div class="post">
             {% if post.image_path %}
             <img src="{{ url_for('static', filename=post.image_path) }}" alt="Outfit by {{ post.username }}">
@@ -23,9 +24,16 @@
                 <p class="username">@{{ post.username }}</p>
                 <p>{{ post.caption }}</p>
                 <p class="tags">{% for tag in post.hashtags %}#{{ tag }} {% endfor %}</p>
-                <p class="likes">♡ {{ post.liked_by | length }}</p>
+                <form method="POST" action="{{url_for('like_post', post_id=post._id)}}">
+                    <button type="submit">
+                        {% if current_user.id in post.liked_by %}
+                            <p class="likes">♥︎ {{ post.liked_by | length }}</p>
+                        {% else %}
+                            <p class="likes">♡ {{ post.liked_by | length }}</p>
+                        {% endif %}
+                    </button>
+                </form>
                 <p class="date">{{ post.created_at.strftime('%b %d, %Y · %I:%M %p') }}</p>
-                                
                 {% if post.buy_links %}
                 <p class="links">
                     {% for link in post.buy_links %}
@@ -35,6 +43,7 @@
                 {% endif %}
             </div>
         </div>
+    </div>
     {% endfor %}
     {% if not posts %}
         <p class="empty">No posts available.</p>

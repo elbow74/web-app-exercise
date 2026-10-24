@@ -42,7 +42,6 @@ def load_user(user_id):
     return User(doc) if doc else None
 
 
-
 @app.route("/authentication", methods=["GET", "POST"])
 def authenticate():
     """Log in, or create an account if the username is new."""
@@ -93,7 +92,8 @@ def logout():
 @app.route("/account")
 def account():
     # """Render the account page."""
-    return render_template("account.html")
+    posts = list(db.posts.find().sort("created_at", -1))
+    return render_template("account.html", posts=posts)
 
 
 @app.route("/create", methods=["GET", "POST"])
@@ -144,15 +144,18 @@ def create():
         "create.html", form=request.form, hashtags=hashtags, buy_links=buy_links
     )
 
+
 @app.route("/edit")
 def edit():
     # """Render the edit post page."""
     return render_template("edit.html")
 
+
 @app.route("/search")
 def search():
     # """Render the search page."""
     return render_template("search.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

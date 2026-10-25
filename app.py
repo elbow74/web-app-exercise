@@ -92,7 +92,8 @@ def logout():
 @app.route("/account")
 def account():
     # """Render the account page."""
-    return render_template("account.html")
+    posts = list(db.posts.find().sort("created_at", -1))
+    return render_template("account.html", posts=posts)
 
 
 @app.route("/create", methods=["GET", "POST"])
@@ -154,24 +155,6 @@ def edit():
 def search():
     # """Render the search page."""
     return render_template("search.html")
-
-
-@app.route("/like/<post_id>", methods=["POST"])
-@login_required
-def like_post(post_id):
-    # """Render the like button."""
-    post = db.posts.find_one({"_id": ObjectId(post_id)})
-    if current_user.id in post.get("liked_by", []):
-        db.posts.update_one(
-            {"_id": post["_id"]}, {"$pull": {"liked_by": current_user.id}}
-        )
-    else:
-        db.posts.update_one(
-            {"_id": post["_id"]}, {"$addToSet": {"liked_by": current_user.id}}
-        )
-    return redirect(
-        url_for("home", _anchor=f"post-{post_id}")
-    )  # redirects back to post (avoids jumping to top of page)
 
 
 if __name__ == "__main__":

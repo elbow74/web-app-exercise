@@ -14,7 +14,7 @@ db.posts.insert_many(
                 "https://www.example.com/jeans",
             ],
             "hashtags": ["vintage", "thrift"],
-            "liked_by": ["sam", "jordan"],
+            "liked_by": [],
             "created_at": datetime.utcnow(),
         },
         {

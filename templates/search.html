@@ -4,36 +4,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
     <title>Search Page</title>
 </head>
 
 <body>
-    <div id="page-wrap">
-        <h1>Search Clothing</h1>
 
-        <form>
-            <label for="search">Search:</label>
-            <input type="text" id="search" name="search">
+<div id="page-wrap">
 
-            <button type="submit">Search</button>
-        </form>
+    <h1>Search Clothing</h1>
 
-        <h2>Results</h2>
+    <form action="{{ url_for('search') }}" method="GET">
 
-        <div class="search-result">
-            <h3>Example Item</h3>
-            <p>View outfits using this clothing item.</p>
-        </div>
+        <label for="search">Search:</label>
 
-        <div class="search-result">
-            <h3>Example Item</h3>
-            <p>View outfits using this clothing item.</p>
-        </div>
+        <input
+            type="text"
+            id="search"
+            name="search"
+            value="{{ query }}"
+            placeholder="Search captions or hashtags"
+        >
 
-        <div class="search-result">
-            <h3>Example Item</h3>
-            <p>View outfits using this clothing item.</p>
-        </div>
-    </div>
+        <button type="submit">Search</button>
+
+    </form>
+
+    {% if query %}
+
+        <h2>Results for "{{ query }}"</h2>
+
+        {% if posts %}
+
+            {% for post in posts %}
+
+                <div class="search-result">
+
+                    <h3>{{ post.username }}</h3>
+
+                    <p>{{ post.caption }}</p>
+
+                    {% if post.hashtags %}
+                        <p>
+                            {% for hashtag in post.hashtags %}
+                                #{{ hashtag }}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>No results found.</p>
+
+        {% endif %}
+
+    {% endif %}
+
+</div>
+
 </body>
+
+</html>

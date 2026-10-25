@@ -164,17 +164,13 @@ def search():
                 {
                     "$or": [
                         {"caption": {"$regex": query, "$options": "i"}},
-                        {"hashtags": {"$regex": query, "$options": "i"}}
+                        {"hashtags": {"$regex": query, "$options": "i"}},
                     ]
                 }
             ).sort("created_at", -1)
         )
-    #"""render the search results page."""
-    return render_template(
-        "search.html",
-        posts=posts,
-        query=query
-    )
+    # """render the search results page."""
+    return render_template("search.html", posts=posts, query=query)
 
 
 @app.route("/like/<post_id>", methods=["POST"])

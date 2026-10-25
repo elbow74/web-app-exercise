@@ -24,7 +24,7 @@
             id="search"
             name="search"
             value="{{ query }}"
-            placeholder="Search captions or hashtags"
+            placeholder="Search captions or #s"
         >
 
         <button type="submit">Search</button>
@@ -41,18 +41,44 @@
 
                 <div class="search-result">
 
-                    <h3>{{ post.username }}</h3>
-
-                    <p>{{ post.caption }}</p>
-
+                    <div class="post">
+                    
+                    {% if post.image_path %}
+                    <img src="{{ url_for('static', filename=post.image_path) }}" alt="Outfit by {{ post.username }}">
+                    {% endif %} 
+                    <p class="username">@{{ post.username }}</p class="username">
+                    <span>{{ post.caption }}</span>
+                    
                     {% if post.hashtags %}
-                        <p>
+                        <span class="tags">
                             {% for hashtag in post.hashtags %}
                                 #{{ hashtag }}
                             {% endfor %}
-                        </p>
+                        </span class="tags">
                     {% endif %}
 
+                    <!-- this is commented out bc the logic behind the like button redirects to the index / home Page... eventually fix this -->
+                    <!-- <form method="POST" action="{{url_for('like_post', post_id=post._id)}}">
+                        <button type="submit">
+                            {% if current_user.id in post.liked_by %}
+                                <p class="likes">♥︎ {{ post.liked_by | length }}</p>
+                            {% else %}
+                                <p class="likes">♡ {{ post.liked_by | length }}</p>
+                            {% endif %}
+                        </button>
+                    </form> -->
+                    
+                    <p class="date">{{ post.created_at.strftime('%b %d, %Y · %I:%M %p') }}</p>
+
+                    {% if post.buy_links %}
+                        <span class="links">
+                            {% for link in post.buy_links %}
+                                <a href="{{ link }}" target="_blank" rel="noopener">Shop {{ loop.index }}</a>
+                            {% endfor %}
+                        </span>
+                    {% endif %}
+
+                    </div>
                 </div>
 
             {% endfor %}

@@ -157,5 +157,23 @@ def search():
     return render_template("search.html")
 
 
+@app.route("/like/<post_id>", methods=["POST"])
+@login_required
+def like_post(post_id):
+    # """Render the like button."""
+    post = db.posts.find_one({"_id": ObjectId(post_id)})
+    if current_user.id in post.get("liked_by", []):
+        db.posts.update_one(
+            {"_id": post["_id"]}, {"$pull": {"liked_by": current_user.id}}
+        )
+    else:
+        db.posts.update_one(
+            {"_id": post["_id"]}, {"$addToSet": {"liked_by": current_user.id}}
+        )
+    return redirect(
+        url_for("home", _anchor=f"post-{post_id}")
+    )  # redirects back to post (avoids jumping to top of page)
+
+
 if __name__ == "__main__":
     app.run(debug=True)

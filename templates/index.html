@@ -29,9 +29,9 @@
                 <form method="POST" action="{{url_for('like_post', post_id=post._id)}}">
                     <button type="submit">
                         {% if current_user.id in post.liked_by %}
-                            <p class="likes">♥︎ {{ post.liked_by | length }}</p>
-                        {% else %}
-                            <p class="likes">♡ {{ post.liked_by | length }}</p>
+                            <span class="likes">♥︎ {{ post.liked_by | length }}</span>                        
+                            {% else %}
+                            <span class="likes">♡ {{ post.liked_by | length }}</span>
                         {% endif %}
                     </button>
                 </form>

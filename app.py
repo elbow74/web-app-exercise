@@ -26,9 +26,9 @@ login_manager = LoginManager(app)
 login_manager.login_view = "authenticate"
 
 
-# hardcoding time in EST, not grabbing user's timezone because that requires javascript
 @app.template_filter("ny_timezone")
 def ny_timezone(dt):
+    """Hardcoding time in EST instead of the original UTC."""
     dt = dt.replace(tzinfo=timezone.utc)
     return dt.astimezone(ZoneInfo("America/New_York")).strftime("%b %d, %Y %I:%M %p")
 

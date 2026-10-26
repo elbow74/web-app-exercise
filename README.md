@@ -13,7 +13,7 @@ In addition to the product vision statement, here is our UXUI reference for this
 
 ## User stories
 
-(https://github.com/users/elbow74/projects/3)
+[User Stories](https://github.com/users/elbow74/projects/3)
 
 ## Steps necessary to run the software
 

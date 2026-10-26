@@ -39,14 +39,13 @@
 
             {% for post in posts %}
 
-                <div class="search-result">
-
+                <div class="search-result" id="post-{{ post._id }}">
                     <div class="post">
                     
                     {% if post.image_path %}
                     <img src="{{ url_for('static', filename=post.image_path) }}" alt="Outfit by {{ post.username }}">
                     {% endif %} 
-                    <p class="username">@{{ post.username }}</p class="username">
+                    <p class="username">@{{ post.username }}</p>
                     <span>{{ post.caption }}</span>
                     
                     {% if post.hashtags %}
@@ -54,19 +53,19 @@
                             {% for hashtag in post.hashtags %}
                                 #{{ hashtag }}
                             {% endfor %}
-                        </span class="tags">
+                        </span>
                     {% endif %}
 
-                    <!-- this is commented out bc the logic behind the like button redirects to the index / home Page... eventually fix this -->
-                    <!-- <form method="POST" action="{{url_for('like_post', post_id=post._id)}}">
+                    <form method="POST" action="{{ url_for('like_post', post_id=post._id) }}">
+                        <input type="hidden" name="next" value="{{ request.full_path }}" />
                         <button type="submit">
                             {% if current_user.id in post.liked_by %}
-                                <p class="likes">♥︎ {{ post.liked_by | length }}</p>
+                                <span class="likes">♥︎ {{ post.liked_by | length }}</span>
                             {% else %}
-                                <p class="likes">♡ {{ post.liked_by | length }}</p>
+                                <span class="likes">♡ {{ post.liked_by | length }}</span>
                             {% endif %}
                         </button>
-                    </form> -->
+                    </form>
                     
                     <p class="date">{{ post.created_at.strftime('%b %d, %Y · %I:%M %p') }}</p>
 

@@ -2,9 +2,10 @@
 
 import os
 from datetime import datetime, timezone
+import re
 from bson.errors import InvalidId
 from bson.objectid import ObjectId
-from flask import Flask, flash, redirect, render_template, request, url_for
+from flask import Flask, flash, redirect, render_template, request, url_for, abort
 from flask_login import (
     LoginManager,
     UserMixin,
@@ -154,6 +155,8 @@ def edit():
 @app.route("/search")
 @login_required
 def search():
+    """render the search results page."""
+
     query = request.args.get("search", "").strip()
 
     posts = []
@@ -163,32 +166,36 @@ def search():
             db.posts.find(
                 {
                     "$or": [
-                        {"caption": {"$regex": query, "$options": "i"}},
-                        {"hashtags": {"$regex": query, "$options": "i"}},
+                        {"caption": {"$regex": re.escape(query), "$options": "i"}},
+                        {"hashtags": {"$regex": re.escape(query), "$options": "i"}},
                     ]
                 }
             ).sort("created_at", -1)
         )
-    # """render the search results page."""
     return render_template("search.html", posts=posts, query=query)
 
 
 @app.route("/like/<post_id>", methods=["POST"])
 @login_required
 def like_post(post_id):
-    # """Render the like button."""
-    post = db.posts.find_one({"_id": ObjectId(post_id)})
+    """Like a post, or unlike it if the user already liked it."""
+    try:
+        post = db.posts.find_one({"_id": ObjectId(post_id)})
+    except InvalidId:
+        post = None
+    if post is None:
+        abort(404)
+
     if current_user.id in post.get("liked_by", []):
-        db.posts.update_one(
-            {"_id": post["_id"]}, {"$pull": {"liked_by": current_user.id}}
-        )
+        db.posts.update_one({"_id": post["_id"]}, {"$pull": {"liked_by": current_user.id}})
     else:
-        db.posts.update_one(
-            {"_id": post["_id"]}, {"$addToSet": {"liked_by": current_user.id}}
-        )
-    return redirect(
-        url_for("home", _anchor=f"post-{post_id}")
-    )  # redirects back to post (avoids jumping to top of page)
+        db.posts.update_one({"_id": post["_id"]}, {"$addToSet": {"liked_by": current_user.id}})
+
+    # go back to the page the like came from, scrolled to this post
+    next_url = request.form.get("next", "")
+    if not next_url.startswith("/") or next_url.startswith(("//", "/\\")):
+        next_url = url_for("home")
+    return redirect(f"{next_url}#post-{post_id}")
 
 
 if __name__ == "__main__":

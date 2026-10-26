@@ -91,9 +91,12 @@ def logout():
 
 
 @app.route("/account")
+@login_required
 def account():
-    # """Render the account page."""
-    posts = list(db.posts.find().sort("created_at", -1))
+    """Render the logged-in user's posts."""
+    posts = list(
+        db.posts.find({"username": current_user.username}).sort("created_at", -1)
+    )
     return render_template("account.html", posts=posts)
 
 
@@ -187,9 +190,13 @@ def like_post(post_id):
         abort(404)
 
     if current_user.id in post.get("liked_by", []):
-        db.posts.update_one({"_id": post["_id"]}, {"$pull": {"liked_by": current_user.id}})
+        db.posts.update_one(
+            {"_id": post["_id"]}, {"$pull": {"liked_by": current_user.id}}
+        )
     else:
-        db.posts.update_one({"_id": post["_id"]}, {"$addToSet": {"liked_by": current_user.id}})
+        db.posts.update_one(
+            {"_id": post["_id"]}, {"$addToSet": {"liked_by": current_user.id}}
+        )
 
     # go back to the page the like came from, scrolled to this post
     next_url = request.form.get("next", "")

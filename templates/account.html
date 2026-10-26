@@ -14,7 +14,7 @@
     <div id="page-wrap">
       <header class="top-bar">  
         <h1>My Posts</h1>
-        <p><a href="{{ url_for('home') }}">Back to feed</a></p>
+        <p><a href="{{ url_for('logout') }}">Log out</a></p>
       </header>
       {% for post in posts if post.username == current_user.username %}
           <div class="post">
@@ -40,6 +40,7 @@
         {% else %}
           <p>You have no posts</p>
       {% endfor %}
+      {% include "_navbar.html" %}
     </div>
   </body>
 </html>

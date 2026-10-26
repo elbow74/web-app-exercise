@@ -14,7 +14,6 @@
     <div id="page-wrap">
       <header class="top-bar">
         <h1>Create post</h1>
-        <p><a href="{{ url_for('home') }}">Back to feed</a></p>
       </header>
 
       {% with messages = get_flashed_messages() %}
@@ -81,6 +80,7 @@
           Post
         </button>
       </form>
+      {% include "_navbar.html" %}
     </div>
   </body>
 </html>

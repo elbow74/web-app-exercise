@@ -15,7 +15,6 @@
 
       <header class="top-bar">
         <h1>Edit post</h1>
-        <p><a href="{{ url_for('account') }}">Back to account</a></p>
       </header>
 
       {% with messages = get_flashed_messages() %}
@@ -137,7 +136,7 @@
         </button>
 
       </form>
-
+    {% include "_navbar.html" %}
     </div>
   </body>
 </html>

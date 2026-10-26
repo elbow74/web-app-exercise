@@ -181,3 +181,30 @@ body {
     color: #b00020;
     font-size: 14px;
 }
+
+/* bottom navigation bar, pinned to the bottom of the phone screen */
+.navbar {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 12px 0;
+    background: #fff;
+    border-top: 1px solid #ddd;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+.navbar a {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    color: #888;
+    font-size: 14px;
+}
+
+.navbar a.active {
+    color: #000;
+    font-weight: bold;
+}

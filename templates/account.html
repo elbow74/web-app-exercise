@@ -35,7 +35,7 @@
                   </p>
                   {% endif %}
               </div>
-              <p><a href="{{ url_for('edit') }}">Edit Post</a></p>
+              <p><a href="{{ url_for('edit', post_id=post._id) }}">Edit Post</a></p>
           </div>
         {% else %}
           <p>You have no posts</p>

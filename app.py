@@ -149,11 +149,73 @@ def create():
     )
 
 
-@app.route("/edit")
-def edit():
-    # """Render the edit post page."""
-    return render_template("edit.html")
+@app.route("/edit/<post_id>", methods=["GET", "POST"])
+@login_required
+def edit(post_id):
+    """Edit one of the logged-in user's posts."""
 
+    try:
+        post = db.posts.find_one({"_id": ObjectId(post_id)})
+    except InvalidId:
+        post = None
+
+    if post is None:
+        abort(404)
+
+    if post["username"] != current_user.username:
+        abort(403)
+
+    hashtags = post.get("hashtags", [])
+    buy_links = post.get("buy_links", [])
+
+    if request.method == "POST":
+        caption = request.form.get("caption", "").strip()
+        hashtags = request.form.getlist("hashtags")
+        buy_links = request.form.getlist("buy_links")
+
+        new_hashtag = request.form.get("new_hashtag", "").strip()
+        new_link = request.form.get("new_link", "").strip()
+        action = request.form.get("action", "save")
+
+        if action in ("add", "save"):
+            if new_hashtag:
+                hashtags.append(new_hashtag)
+
+            if new_link:
+                buy_links.append(new_link)
+
+        if action.startswith("remove_hashtag:"):
+            removed = action.removeprefix("remove_hashtag:")
+            hashtags = [tag for tag in hashtags if tag != removed]
+
+        elif action.startswith("remove_link:"):
+            removed = action.removeprefix("remove_link:")
+            buy_links = [link for link in buy_links if link != removed]
+
+        elif action == "save":
+            if not caption:
+                flash("Caption is required.")
+            else:
+                db.posts.update_one(
+                    {"_id": post["_id"]},
+                    {
+                        "$set": {
+                            "caption": caption,
+                            "hashtags": hashtags,
+                            "buy_links": buy_links,
+                        }
+                    },
+                )
+
+                return redirect(url_for("account"))
+
+    return render_template(
+        "edit.html",
+        post=post,
+        form=request.form,
+        hashtags=hashtags,
+        buy_links=buy_links,
+    )
 
 @app.route("/search")
 @login_required

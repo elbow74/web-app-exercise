@@ -36,6 +36,9 @@
                   {% endif %}
               </div>
               <p><a href="{{ url_for('edit', post_id=post._id) }}">Edit Post</a></p>
+              <form method="POST" action="{{ url_for('delete', post_id=post._id) }}">
+                <button type="submit">Delete Post</button>
+              </form>
           </div>
         {% else %}
           <p>You have no posts</p>

@@ -2,6 +2,7 @@
 
 import os
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 import re
 from bson.errors import InvalidId
 from bson.objectid import ObjectId
@@ -23,6 +24,13 @@ app.secret_key = os.getenv("SECRET_KEY", "dev")
 
 login_manager = LoginManager(app)
 login_manager.login_view = "authenticate"
+
+
+# hardcoding time in EST, not grabbing user's timezone because that requires javascript
+@app.template_filter("ny_timezone")
+def ny_timezone(dt):
+    dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(ZoneInfo("America/New_York")).strftime("%b %d, %Y %I:%M %p")
 
 
 class User(UserMixin):
@@ -216,6 +224,7 @@ def edit(post_id):
         hashtags=hashtags,
         buy_links=buy_links,
     )
+
 
 @app.route("/search")
 @login_required

@@ -66,9 +66,7 @@
                             {% endif %}
                         </button>
                     </form>
-                    
-                    <p class="date">{{ post.created_at.strftime('%b %d, %Y · %I:%M %p') }}</p>
-
+                    <p class="date">{{ post.created_at | ny_timezone }}</p> 
                     {% if post.buy_links %}
                         <span class="links">
                             {% for link in post.buy_links %}

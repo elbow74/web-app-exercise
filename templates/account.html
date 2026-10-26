@@ -26,7 +26,7 @@
                   <p>{{ post.caption }}</p>
                   <p class="tags">{% for tag in post.hashtags %}#{{ tag }} {% endfor %}</p>
                   <p class="likes">♡ {{ post.liked_by | length }}</p>
-                  <p class="date">{{ post.created_at.strftime('%b %d, %Y · %I:%M %p') }}</p> 
+                  <p class="date">{{ post.created_at | ny_timezone }}</p> 
                   {% if post.buy_links %}
                   <p class="links">
                       {% for link in post.buy_links %}

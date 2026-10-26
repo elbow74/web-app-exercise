@@ -12,7 +12,10 @@
 
   <body>
     <div id="page-wrap">
-      <h1>My Posts</h1>
+      <header class="top-bar">  
+        <h1>My Posts</h1>
+        <p><a href="{{ url_for('home') }}">Back to feed</a></p>
+      </header>
       {% for post in posts if post.username == current_user.username %}
           <div class="post">
               {% if post.image_path %}
@@ -32,6 +35,7 @@
                   </p>
                   {% endif %}
               </div>
+              <p><a href="{{ url_for('edit') }}">Edit Post</a></p>
           </div>
         {% else %}
           <p>You have no posts</p>

@@ -4,36 +4,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
     <title>Search Page</title>
 </head>
 
 <body>
-    <div id="page-wrap">
-        <h1>Search Clothing</h1>
 
-        <form>
-            <label for="search">Search:</label>
-            <input type="text" id="search" name="search">
+<div id="page-wrap">
 
-            <button type="submit">Search</button>
-        </form>
+    <h1>Search Clothing</h1>
 
-        <h2>Results</h2>
+    <form action="{{ url_for('search') }}" method="GET">
 
-        <div class="search-result">
-            <h3>Example Item</h3>
-            <p>View outfits using this clothing item.</p>
-        </div>
+        <label for="search">Search:</label>
 
-        <div class="search-result">
-            <h3>Example Item</h3>
-            <p>View outfits using this clothing item.</p>
-        </div>
+        <input
+            type="text"
+            id="search"
+            name="search"
+            value="{{ query }}"
+            placeholder="Search captions or #s"
+        >
 
-        <div class="search-result">
-            <h3>Example Item</h3>
-            <p>View outfits using this clothing item.</p>
-        </div>
-    </div>
+        <button type="submit">Search</button>
+
+    </form>
+
+    {% if query %}
+
+        <h2>Results for "{{ query }}"</h2>
+
+        {% if posts %}
+
+            {% for post in posts %}
+
+                <div class="search-result" id="post-{{ post._id }}">
+                    <div class="post">
+                    
+                    {% if post.image_path %}
+                    <img src="{{ url_for('static', filename=post.image_path) }}" alt="Outfit by {{ post.username }}">
+                    {% endif %} 
+                    <p class="username">@{{ post.username }}</p>
+                    <span>{{ post.caption }}</span>
+                    
+                    {% if post.hashtags %}
+                        <span class="tags">
+                            {% for hashtag in post.hashtags %}
+                                #{{ hashtag }}
+                            {% endfor %}
+                        </span>
+                    {% endif %}
+
+                    <form method="POST" action="{{ url_for('like_post', post_id=post._id) }}">
+                        <input type="hidden" name="next" value="{{ request.full_path }}" />
+                        <button type="submit">
+                            {% if current_user.id in post.liked_by %}
+                                <span class="likes">♥︎ {{ post.liked_by | length }}</span>
+                            {% else %}
+                                <span class="likes">♡ {{ post.liked_by | length }}</span>
+                            {% endif %}
+                        </button>
+                    </form>
+                    
+                    <p class="date">{{ post.created_at.strftime('%b %d, %Y · %I:%M %p') }}</p>
+
+                    {% if post.buy_links %}
+                        <span class="links">
+                            {% for link in post.buy_links %}
+                                <a href="{{ link }}" target="_blank" rel="noopener">Shop {{ loop.index }}</a>
+                            {% endfor %}
+                        </span>
+                    {% endif %}
+
+                    </div>
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>No results found.</p>
+
+        {% endif %}
+
+    {% endif %}
+
+</div>
+
 </body>
+
+</html>

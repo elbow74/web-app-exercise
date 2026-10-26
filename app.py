@@ -2,6 +2,7 @@
 
 import os
 from datetime import datetime, timezone
+import re
 from bson.errors import InvalidId
 from bson.objectid import ObjectId
 from flask import Flask, flash, redirect, render_template, request, url_for, abort
@@ -93,7 +94,9 @@ def logout():
 @login_required
 def account():
     """Render the logged-in user's posts."""
-    posts = list(db.posts.find({"username": current_user.username}).sort("created_at", -1))
+    posts = list(
+        db.posts.find({"username": current_user.username}).sort("created_at", -1)
+    )
     return render_template("account.html", posts=posts)
 
 
@@ -153,9 +156,27 @@ def edit():
 
 
 @app.route("/search")
+@login_required
 def search():
-    # """Render the search page."""
-    return render_template("search.html")
+    """render the search results page."""
+
+    query = request.args.get("search", "").strip()
+
+    posts = []
+
+    if query:
+        posts = list(
+            db.posts.find(
+                {
+                    "$or": [
+                        {"caption": {"$regex": re.escape(query), "$options": "i"}},
+                        {"hashtags": {"$regex": re.escape(query), "$options": "i"}},
+                    ]
+                }
+            ).sort("created_at", -1)
+        )
+    return render_template("search.html", posts=posts, query=query)
+
 
 @app.route("/like/<post_id>", methods=["POST"])
 @login_required
@@ -169,12 +190,20 @@ def like_post(post_id):
         abort(404)
 
     if current_user.id in post.get("liked_by", []):
-        db.posts.update_one({"_id": post["_id"]}, {"$pull": {"liked_by": current_user.id}})
+        db.posts.update_one(
+            {"_id": post["_id"]}, {"$pull": {"liked_by": current_user.id}}
+        )
     else:
-        db.posts.update_one({"_id": post["_id"]}, {"$addToSet": {"liked_by": current_user.id}})
+        db.posts.update_one(
+            {"_id": post["_id"]}, {"$addToSet": {"liked_by": current_user.id}}
+        )
 
-    # anchor scrolls the feed back to this post instead of the top
-    return redirect(url_for("home", _anchor=f"post-{post_id}"))
+    # go back to the page the like came from, scrolled to this post
+    next_url = request.form.get("next", "")
+    if not next_url.startswith("/") or next_url.startswith(("//", "/\\")):
+        next_url = url_for("home")
+    return redirect(f"{next_url}#post-{post_id}")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,6 +1,8 @@
 """Virtual Closet web app."""
 
 import os
+import uuid
+from werkzeug.utils import secure_filename
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 import re
@@ -24,6 +26,11 @@ app.secret_key = os.getenv("SECRET_KEY", "dev")
 
 login_manager = LoginManager(app)
 login_manager.login_view = "authenticate"
+
+UPLOAD_FOLDER = os.path.join(app.static_folder, "uploads")
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5 MB
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 # hardcoding time in EST, not grabbing user's timezone because that requires javascript
@@ -108,12 +115,25 @@ def account():
     return render_template("account.html", posts=posts)
 
 
+def save_image(photo):
+    """Save an uploaded image and return its path, or None if it isn't valid."""
+    if not photo or not photo.filename:
+        return None
+    extension = secure_filename(photo.filename).rsplit(".", 1)[-1].lower()
+    if extension not in ALLOWED_EXTENSIONS:
+        return None
+    saved_name = f"{uuid.uuid4().hex}.{extension}"
+    photo.save(os.path.join(UPLOAD_FOLDER, saved_name))
+    return f"uploads/{saved_name}"
+
+
 @app.route("/create", methods=["GET", "POST"])
 @login_required
 def create():
     """Show the new post form, add or remove hashtags and links, and save the post."""
     hashtags = []
     buy_links = []
+    image_path = None
 
     if request.method == "POST":
         caption = request.form.get("caption", "").strip()
@@ -122,6 +142,18 @@ def create():
         new_hashtag = request.form.get("new_hashtag", "").strip()
         new_link = request.form.get("new_link", "").strip()
         action = request.form.get("action", "post")
+
+        # keep the image from an earlier submit unless a new one is chosen
+        image_path = request.form.get("image_path") or None
+        if image_path and not image_path.startswith("uploads/"):
+            image_path = None
+        photo = request.files.get("photo")
+        if photo and photo.filename:
+            new_path = save_image(photo)
+            if new_path:
+                image_path = new_path
+            else:
+                flash("Please choose an image file (png, jpg, jpeg, gif, webp).")
 
         if action in ("add", "post"):
             if new_hashtag:
@@ -142,7 +174,7 @@ def create():
                 db.posts.insert_one(
                     {
                         "username": current_user.username,
-                        "image_path": None,  # set by the image upload feature
+                        "image_path": image_path,
                         "caption": caption,
                         "hashtags": hashtags,
                         "buy_links": buy_links,
@@ -153,7 +185,11 @@ def create():
                 return redirect(url_for("home"))
 
     return render_template(
-        "create.html", form=request.form, hashtags=hashtags, buy_links=buy_links
+        "create.html",
+        form=request.form,
+        hashtags=hashtags,
+        buy_links=buy_links,
+        image_path=image_path,
     )
 
 

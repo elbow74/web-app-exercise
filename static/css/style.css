@@ -181,3 +181,10 @@ body {
     color: #b00020;
     font-size: 14px;
 }
+
+.create-form .preview {
+    width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+    border-radius: 8px;
+}

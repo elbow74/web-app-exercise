@@ -21,4 +21,5 @@ See instructions. Delete this line and place instructions to download, configure
 
 ## Task boards
 
-See instructions. Delete this line and place a link to the task boards here.
+[Sprint 1](https://github.com/users/elbow74/projects/4) 
+[Sprint 2](https://github.com/users/elbow74/projects/3)

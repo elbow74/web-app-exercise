@@ -23,8 +23,13 @@
         {% endfor %}
       {% endwith %}
 
-      <form class="create-form" method="post" action="{{ url_for('create') }}">
-        <!-- image upload goes here -->
+      <form class="create-form" method="post" action="{{ url_for('create') }}" enctype="multipart/form-data">
+        <label for="photo">Photo</label>
+        {% if image_path %}
+          <img class="preview" src="{{ url_for('static', filename=image_path) }}" alt="Selected photo" />
+          <input type="hidden" name="image_path" value="{{ image_path }}" />
+        {% endif %}
+        <input id="photo" type="file" name="photo" accept="image/*" />
 
         <label for="caption">Caption</label>
         <textarea id="caption" name="caption" rows="3" required>{{ form.get('caption', '') }}</textarea>

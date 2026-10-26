@@ -157,6 +157,14 @@ def create():
     )
 
 
+@app.route("/delete/<post_id>", methods=["POST"])
+@login_required
+def delete(post_id):
+    """delete one of the logged-in user's posts."""
+    db.posts.delete_one({"_id": ObjectId(post_id), "username": current_user.username})
+    return redirect(url_for("home"))
+
+
 @app.route("/edit/<post_id>", methods=["GET", "POST"])
 @login_required
 def edit(post_id):

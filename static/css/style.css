@@ -50,7 +50,7 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 450px;
+    height: 470px;
 }
 
 .post img {
